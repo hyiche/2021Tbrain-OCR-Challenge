@@ -33,17 +33,17 @@
 | # | 程式碼 | 說明  |
 |---|-------|-------|
 | 1 | YoLov4.ipynb | 參考darknet [[3]] 寫成，於此finetune YoLov4，因為此專案僅需YoLo框出目標而不在意分類(此專案只有一類，也就是序號需辨識)，模型選擇的技術指標僅考量IoU(Intersection over Union)，此數值介於0~1之間，數值愈大表示框出之範圍愈準確。惟訓練資料提供之品質不佳，遂決定自行標註影像上的序號位置 [[7]]，再投入訓練。最終yolov4-custom_3000.weights的average IoU = 91.32% 優於其餘預訓練模型。 |
-| 2 | seq2seq_TrOCR.ipynb | 參考HuggingFace [[5]] 完成，建模的前處理如下：<br/>1. 觀察知道有些影像發生翻轉，故對訓練資料做影像增強(Image Augmentation)。<br/>2. 將影像大小縮放至384x384，以符合ViT model規範 [[5]]、[[6]]。<br/>3. 將縮放後的影像歸一化(Normalization)始進入模型進行訓練。<br/>模型選擇的技術指標不以交叉熵損失函數來度量，而是採用競賽官方提供的評分方式 [[1]]，著重於序號是否能完全預測正確，此指標數值愈小表示序號預測愈準確。最終採用 my-model-epoch54，做為我的TrOCR 模型。 |
-| 3 | YoLo_TrOCR_inference.ipynb | 載入 yolov4-custom_3000.weights 模型，對測試資料框出物件位置，再接著以my-model-epoch54 生成字元辨識，最後將辨識結果寫入excel上傳至競賽官方。 |
+| 2 | TrOCR.ipynb | 參考HuggingFace [[5]] 完成，建模的前處理如下：<br/>1. 觀察知道有些影像發生翻轉，故對訓練資料做影像增強(Image Augmentation)。<br/>2. 將影像大小縮放至384x384，以符合ViT model規範 [[5]]、[[6]]。<br/>3. 將縮放後的影像歸一化(Normalization)始進入模型進行訓練。<br/>模型選擇的技術指標不以交叉熵損失函數來度量，而是採用競賽官方提供的評分方式 [[1]]，著重於序號是否能完全預測正確，此指標數值愈小表示序號預測愈準確。最終採用 my-model-epoch54，做為我的TrOCR 模型。 |
+| 3 | inference.ipynb | 載入 yolov4-custom_3000.weights 模型，對測試資料框出物件位置，再接著以my-model-epoch54 生成字元辨識，最後將辨識結果寫入excel上傳至競賽官方。 |
 
 ## 結語
 此次數據競賽最終取得第11名(11/321)，在模型取捨上仍有嘗試進步的空間。
-1. 下圖是在FiftyOne 資料集中進行實驗並可視化繪製模型的 IoU 分佈圖
-(credit by Eric Hofesmann [[8]])，在此實驗中，Eric Hofesmann表示，EfficientDet [[9]] 的 mAP 低於 YoLov4，但邊界框(bounding boxes) IoU > 0.9 的百分比明顯更高。這表明如果任務中邊界框的緊密度很重要，那麼 EfficientDet 是比 YoLov4 或 Faster-RCNN 更好的選擇。可見YoLov4與EfficientDet之間的取捨是值得嘗試的。
+1. 下圖是在FiftyOne 資料集中進行實驗並繪製模型的 IoU 分佈圖
+(credit by Eric Hofesmann [[8]])，在此實驗中，Eric Hofesmann表示，EfficientDet [[9]] 的 mAP 低於 YoLov4，但邊界框(bounding boxes) IoU > 0.9 的百分比明顯更高。這表明如果任務中邊界框的緊密度很重要，那麼 EfficientDet 是比 YoLov4 或 Faster-RCNN 更好的選擇。可見EfficientDet在我們的專案是值得嘗試的。
 ![](./material/IoU_comparison.png)
 
 
-2. 在TrOCR的實作中，採用的是TrOCR base model (334M個參數)，論文另有提供TrOCR large model(558M個參數)公開使用，惟當時擁有的硬體效能不足以操作如此龐大的模型。
+2. 我們在TrOCR的實作中，採用的是TrOCR base model (334M個參數)，論文另有提供TrOCR large model(558M個參數)公開使用，惟當時擁有的硬體效能不足以操作如此龐大的模型。
 
 [//]: # (## Reference)
 [1]: https://tbrain.trendmicro.com.tw/Competitions/Details/17
@@ -55,5 +55,3 @@
 [7]: https://github.com/tzutalin/labelImg
 [8]: https://towardsdatascience.com/iou-a-better-detection-evaluation-metric-45a511185be1
 [9]: https://arxiv.org/pdf/1911.09070.pdf
-
-
